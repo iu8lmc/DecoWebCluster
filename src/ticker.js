@@ -52,7 +52,7 @@ function activeList() {
 /** Per la mappa: le operazioni con l'indice dell'entità DXCC (-1 se il nominativo non si risolve). */
 export const dxpeditions = () => activeList().map((o) => ({ ...o, ent: resolve(o.call) }));
 
-export function initTicker({ getLang, getConfirmedOnly, t, callUrl }) {
+export function initTicker({ getLang, getConfirmedOnly, t, callUrl, source = SOURCE }) {
   const box = document.getElementById('ticker');
   if (!box) return;
   let lastKey = '', paused = false;
@@ -97,7 +97,7 @@ export function initTicker({ getLang, getConfirmedOnly, t, callUrl }) {
 
   async function load() {
     try {
-      const r = await fetch(SOURCE, { cache: 'no-store' });
+      const r = await fetch(source, { cache: 'no-store' });
       if (!r.ok) throw new Error(r.status);
       const html = new TextDecoder('iso-8859-1').decode(await r.arrayBuffer());
       const d = parseAdxo(html);

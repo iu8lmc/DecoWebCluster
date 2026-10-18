@@ -6,7 +6,8 @@
     "scripts":  {
                     "build":  "node build.mjs",
                     "dev":  "node dev.mjs",
-                    "build:hamhub":  "esbuild src/hamhub-map.js --bundle --format=iife --global-name=HamMapLib --minify --target=es2019 --outfile=dist-hamhub/map/hamhub-map.js"
+                    "build:hamhub":  "esbuild src/hamhub-map.js --bundle --format=iife --global-name=HamMapLib --minify --target=es2019 --outfile=dist-hamhub/map/hamhub-map.js",
+                    "build:hamhub-ticker":  "esbuild src/hamhub-ticker.js --bundle --format=iife --global-name=HamTickerLib --minify --target=es2019 --outfile=dist-hamhub/map/hamhub-ticker.js"
                 },
     "keywords":  [
 
