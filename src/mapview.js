@@ -565,7 +565,7 @@ return (() => {
   $('#btnReset').addEventListener('click', resetView);
   new ResizeObserver(() => setup()).observe(cv);
   GL.onLoad = () => { glDirty = true; };
-  if (GL.ok) GL.loadEarth('icons/earth.webp');
+  if (GL.ok) GL.loadEarth(o.earth || 'icons/earth.webp');
   setInterval(() => { glDirty = true; }, 30000); // il terminatore si sposta lentamente
   readColors(); setup(); requestAnimationFrame(loop);
   return {

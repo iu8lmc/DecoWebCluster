@@ -1,22 +1,26 @@
-{
-  "name": "decowebcluster",
-  "version": "1.0.0",
-  "description": "DecoWebCluster: client web per DX Cluster (DXSpider) con mappa, propagazione, statistiche e area personale",
-  "main": "index.js",
-  "scripts": {
-    "build": "node build.mjs", "dev": "node dev.mjs"
-  },
-  "keywords": [],
-  "author": "Martino Merola IU8LMC",
-  "license": "MIT",
-  "type": "commonjs",
-  "dependencies": {
-    "d3-geo": "^3.1.1",
-    "esbuild": "^0.28.2",
-    "flag-icons": "^7.5.0",
-    "satellite.js": "^5.0.0",
-    "topojson-client": "^3.1.0",
-    "world-atlas": "^2.0.2",
-    "world-countries": "^5.1.0"
-  }
+﻿{
+    "name":  "decowebcluster",
+    "version":  "1.0.0",
+    "description":  "DecoWebCluster: client web per DX Cluster (DXSpider) con mappa, propagazione, statistiche e area personale",
+    "main":  "index.js",
+    "scripts":  {
+                    "build":  "node build.mjs",
+                    "dev":  "node dev.mjs",
+                    "build:hamhub":  "esbuild src/hamhub-map.js --bundle --format=iife --global-name=HamMapLib --minify --target=es2019 --outfile=dist-hamhub/map/hamhub-map.js"
+                },
+    "keywords":  [
+
+                 ],
+    "author":  "Martino Merola IU8LMC",
+    "license":  "MIT",
+    "type":  "commonjs",
+    "dependencies":  {
+                         "d3-geo":  "^3.1.1",
+                         "esbuild":  "^0.28.2",
+                         "flag-icons":  "^7.5.0",
+                         "satellite.js":  "^5.0.0",
+                         "topojson-client":  "^3.1.0",
+                         "world-atlas":  "^2.0.2",
+                         "world-countries":  "^5.1.0"
+                     }
 }
