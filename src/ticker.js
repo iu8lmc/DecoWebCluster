@@ -52,7 +52,7 @@ function activeList() {
 /** Per la mappa: le operazioni con l'indice dell'entità DXCC (-1 se il nominativo non si risolve). */
 export const dxpeditions = () => activeList().map((o) => ({ ...o, ent: resolve(o.call) }));
 
-export function initTicker({ getLang, getConfirmedOnly, t, callUrl, source = SOURCE }) {
+export function initTicker({ getLang, getConfirmedOnly, t, callUrl, source = SOURCE, extra = () => [] }) {
   const box = document.getElementById('ticker');
   if (!box) return;
   let lastKey = '', paused = false;
@@ -75,16 +75,18 @@ export function initTicker({ getLang, getConfirmedOnly, t, callUrl, source = SOU
 
   function render() {
     const list = items();
-    if (!list.length) {
+    const xs = extra();
+    if (!list.length && !xs.length) {
       box.innerHTML = `<span class="tk-label">ADXO</span><span class="tk-empty">${data ? t('tkNone') : t('tkLoading')}</span>`;
       lastKey = '';
       return;
     }
-    const body = html(list);
+    const exHtml = xs.map((x) => `<span class="tk-item"><i class="tk-dot"></i><b><a class="cs" href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.text)}</a></b> <span>· ${esc(x.source)}</span></span>`).join('');
+    const body = exHtml + html(list);
     const key = body + getLang();
     if (key === lastKey) return; // niente da cambiare: l'animazione non riparte
     lastKey = key;
-    box.innerHTML = `<span class="tk-label" title="${esc(data.updated)}">📡 ADXO</span>
+    box.innerHTML = `<span class="tk-label" title="${esc(data ? data.updated : '')}">📡 ADXO</span>
       <div class="tk-track"><div class="tk-move"><div class="tk-group">${body}</div><div class="tk-group" aria-hidden="true">${body}</div></div></div>
       <button class="tk-pause" type="button" aria-label="${t('tkPause')}" title="${t('tkPause')}">${paused ? '▶' : '⏸'}</button>`;
     const move = box.querySelector('.tk-move'), w = box.querySelector('.tk-group').scrollWidth;
