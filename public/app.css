@@ -579,3 +579,8 @@ code{background:rgba(120,160,255,.15);padding:1px 6px;border-radius:4px;font-siz
 .ab-auto{color:inherit;text-decoration:none}
 .ab-auto i{font-style:normal;color:var(--mut)}
 .ab-auto:hover{text-decoration:underline}
+
+.ab-mini{height:16px;width:auto;vertical-align:middle;margin-left:6px}
+.ab-mini-light{display:none}
+:root[data-theme=light] .ab-mini-dark{display:none}
+:root[data-theme=light] .ab-mini-light{display:inline-block}
