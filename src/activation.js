@@ -304,17 +304,27 @@ export function initActivation({ $, $$, esc, getLang: _appLang, store, deps = {}
     $('#actTitle').textContent = `🏝 ${tr('title')} ${CALL}`;
   }
   const BAR = { it: `Scopri lo special cluster di ${CALL}: statistiche, spot in entrata e in uscita, collegamenti per banda e rapporti PSK Reporter in tempo reale. Clicca qui`, en: `Discover the ${CALL} special cluster: statistics, incoming and outgoing spots, activity per band and live PSK Reporter reports. Click here` };
-  let newsItems = [], newsTimer = 0;
-// Notizie speciali dal servizio del portale (/hh-api/news): compaiono prima del testo fisso
+  let newsItems = [], autoItems = [], newsTimer = 0;
+// Notizie dal servizio del portale: a mano (/hh-api/news) prima, poi quelle automatiche (/hh-api/auto) in ordine casuale
 async function loadNews() {
   try {
-    const r = await fetch('/hh-api/news', { cache: 'no-store' });
-    if (r.ok) { newsItems = await r.json(); applyBar(); }
+    const [a, b] = await Promise.all([
+      fetch('/hh-api/news', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : [])),
+      fetch('/hh-api/auto', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : [])),
+    ]);
+    newsItems = a; autoItems = b; applyBar();
   } catch { /* resta l'ultimo elenco letto */ }
 }
 function applyBar() {
   const tk = $('#actBarTrack'); if (!tk) return;
-  const news = newsItems.map((x) => `<span>📢 ${esc(x.text)} ▸</span>`).join('');
+  if (!tk.dataset.guard) { // il click su un link della barra non deve aprire il pannello 9T0MD
+    tk.dataset.guard = '1';
+    tk.addEventListener('click', (e) => { if (e.target.closest('a')) e.stopPropagation(); });
+  }
+  const manual = newsItems.map((x) => `<span>📢 ${esc(x.text)} ▸</span>`).join('');
+  const auto = [...autoItems].sort(() => Math.random() - 0.5)
+    .map((x) => `<a class="ab-auto" href="${esc(x.url)}" target="_blank" rel="noopener">📰 ${esc(x.text)} <i>· ${esc(x.source)}</i> ▸</a>`).join('');
+  const news = manual + auto;
   const m = `<span>🏝 ${esc(BAR[getLang()] || BAR.it)} ▸</span>`;
   tk.innerHTML = news + m + news + m;
 }
