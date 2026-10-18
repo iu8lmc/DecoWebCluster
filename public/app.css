@@ -584,3 +584,8 @@ code{background:rgba(120,160,255,.15);padding:1px 6px;border-radius:4px;font-siz
 .ab-mini-light{display:none}
 :root[data-theme=light] .ab-mini-dark{display:none}
 :root[data-theme=light] .ab-mini-light{display:inline-block}
+
+.ab-logo{height:26px;width:auto;flex:none}
+.ab-logo-light{display:none}
+:root[data-theme=light] .ab-logo-dark{display:none}
+:root[data-theme=light] .ab-logo-light{display:inline-block}
