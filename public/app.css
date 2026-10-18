@@ -26,7 +26,8 @@ a{color:var(--acc)}
 :root[data-theme=light] .top{background:rgba(245,248,254,.82)}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--tx)}
 .brand img{border-radius:50%;box-shadow:0 0 0 2px var(--acc2),0 0 18px rgba(245,185,66,.35)}
-.brand img.brand-logo{height:40px;width:auto;border-radius:0;box-shadow:none}
+.brand img.brand-logo{height:56px;width:auto;border-radius:0;box-shadow:none}
+.home-ico{display:grid;place-items:center;width:40px;height:40px;flex:none}
 .brand-logo-light{display:none}
 :root[data-theme=light] .brand-logo-dark{display:none}
 :root[data-theme=light] .brand-logo-light{display:block}
