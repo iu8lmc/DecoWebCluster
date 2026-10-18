@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IQ8DO DX Cluster · A.R.I. Caserta</title>
+<meta name="description" content="DX Cluster in tempo reale della Sezione A.R.I. di Caserta: mappa mondiale live, filtri intelligenti, avvisi e propagazione.">
+<meta name="theme-color" content="#050b18">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="bg-stars" aria-hidden="true"></div>
+
+<header class="top">
+  <a class="brand" href="./" aria-label="IQ8DO DX Cluster">
+    <img src="icons/logo-96.png" width="40" height="40" alt="">
+    <span class="brand-t"><b>IQ8DO</b><small data-i18n="tagline">DX Cluster · A.R.I. Caserta</small></span>
+  </a>
+  <div class="clock" aria-label="UTC"><span id="utc">--:--:--</span><small>UTC</small></div>
+  <div class="solar" id="solar" title="NOAA SWPC"></div>
+  <button class="onl" id="onlBadge" type="button" hidden aria-label="Visitatori online"><i></i><b id="onlN">–</b></button>
+  <div class="spacer"></div>
+  <button class="ico" id="btnSearch" type="button" title="Cerca" data-i18n-title="search"><svg viewBox="0 0 24 24"><path d="M10 4a6 6 0 1 0 3.7 10.7l4.8 4.8 1.4-1.4-4.8-4.8A6 6 0 0 0 10 4zm0 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/></svg></button>
+  <div class="search"><input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Nominativo…" data-i18n-ph="search"><kbd>/</kbd></div>
+  <button class="ico inst" id="btnInstall" title="Installa APP" data-i18n-title="install" hidden><svg viewBox="0 0 24 24"><path d="M12 3v11.2l3.6-3.6L17 12l-5 5-5-5 1.4-1.4L11 14.200V3zM5 19h14v2H5z"/></svg><span data-i18n="installApp">Installa APP</span></button>
+  <button class="ico acc" id="btnAccount" type="button" title="Area personale"><svg viewBox="0 0 24 24"><path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm0 2c-4 0-8 2-8 5v2h16v-2c0-3-4-5-8-5z"/></svg><span id="btnAccountTxt">Area personale</span></button>
+  <button class="ico" id="btnTools" type="button" title="Strumenti radio"><svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.700C.4 7.100.9 10.100 2.900 12.100c1.900 1.900 4.600 2.400 6.900 1.500l9.100 9.100c.4.400 1 .4 1.400 0l2.300-2.300c.5-.4.5-1.100.1-1.500z"/></svg></button>
+  <button class="ico" id="btnAna" type="button" title="Analisi"><svg viewBox="0 0 24 24"><path d="M4 20V10h3v10zm6 0V4h3v16zm6 0v-7h3v7z"/></svg></button>
+  <button class="ico" id="btnAct" type="button" title="Activation 9T0MD"><svg viewBox="0 0 24 24"><path d="M12 2l2.6 6.2 6.4.5-4.9 4.2 1.5 6.3L12 15.8 6.4 19.2l1.5-6.3L3 8.7l6.4-.5z"/></svg></button>
+  <button class="ico" id="btnAlerts" title="Avvisi" data-i18n-title="alerts"><svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V11a6 6 0 0 0-5-5.9V4a1 1 0 0 0-2 0v1.1A6 6 0 0 0 6 11v5l-2 2v1h16v-1z"/></svg><i id="alertDot" hidden></i></button>
+  <button class="ico" id="btnTheme" title="Tema" data-i18n-title="theme"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.4A6 6 0 0 1 12 3z"/></svg></button>
+  <button class="ico" id="btnSettings" title="Impostazioni" data-i18n-title="settings"><svg viewBox="0 0 24 24"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.5 7.5 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6c-.6.2-1.2.6-1.7 1l-2.4-1-2 3.4L4.6 11a7.600 7.600 0 0 0 0 2l-2 1.600 2 3.400 2.400-1c.5.400 1.100.800 1.700 1l.4 2.600h4l.4-2.600c.6-.2 1.200-.6 1.700-1l2.400 1 2-3.400zM12 15.500A3.500 3.500 0 1 1 12 8.500a3.500 3.500 0 0 1 0 7z"/></svg></button>
+</header>
+
+<button type="button" class="actbar" id="actBar" aria-label="Special cluster 9T0MD"><img src="icons/9t0md.jpg" alt="" width="30" height="32"><span class="ab-label">SPECIAL CLUSTER</span><span class="ab-win"><span class="ab-track" id="actBarTrack"></span></span></button>
+<div class="srcbar" role="group" aria-label="Fonte degli spot"><span data-i18n="srcLabel">Fonte</span><div class="chips" id="srcChips"><button data-s="human" class="on" data-i18n="srcHuman">Cluster</button><button data-s="hcw" data-i18n="srcHcw">Cluster + Skimmer CW</button><button data-s="hft" data-i18n="srcHft">Cluster + Skimmer FT8</button><button data-s="cw" data-i18n="srcCw">Solo Skimmer CW</button><button data-s="ft" data-i18n="srcFt">Solo Skimmer FT8</button><button data-s="all" data-i18n="srcAll">Tutto</button></div></div>
+
+<form class="spotbar" id="spotbar" hidden autocomplete="off" aria-label="Invia uno spot">
+  <button type="button" class="sbtog" id="sbToggle">📡 Invia uno spot</button>
+  <div class="sbfields"><input id="sbDx" maxlength="20" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="DX"><input id="sbFreq" inputmode="decimal" maxlength="10" aria-label="kHz"><input id="sbCom" maxlength="60" aria-label="Commento"><button type="submit" id="sbSend" class="sbsend">Invia</button></div>
+  <span class="sbinfo" id="sbInfo"></span><span id="sbMsg" role="status" aria-live="polite"></span>
+</form>
+
+<main class="layout" id="layout" data-tab="map">
+  <section class="card mapcard" id="mapcard">
+    <div class="map-tools">
+      <div class="seg" id="projSeg" role="group" aria-label="Vista">
+        <button data-proj="flat" class="on" data-i18n="flat">Piana</button>
+        <button data-proj="azim" data-i18n="azim">Azimutale</button>
+        <button data-proj="globe" data-i18n="globe">Globo</button>
+      </div>
+      <details class="layers"><summary>☰ <span data-i18n="layers">Livelli</span></summary>
+        <div class="pop">
+          <label class="chk"><input type="checkbox" id="optArcs" checked> <span data-i18n="arcs">Archi</span></label>
+          <label class="chk"><input type="checkbox" id="optNight" checked> <span data-i18n="night">Giorno/notte</span></label>
+          <label class="chk"><input type="checkbox" id="optAurora" checked> <span data-i18n="aurora">Aurora</span></label>
+          <label class="chk"><input type="checkbox" id="optTiles" checked> <span data-i18n="tilesL">Immagini satellitari (zoom)</span></label>
+          <label class="chk"><input type="checkbox" id="optHeard" checked> <span data-i18n="heardL">Dove mi sentono</span></label>
+          <label class="chk"><input type="checkbox" id="optSats" checked> <span data-i18n="satL">Satelliti</span></label>
+          <label class="chk"><input type="checkbox" id="optMoon" checked> <span data-i18n="moonL">Luna</span></label>
+          <label class="chk"><input type="checkbox" id="optQuakes" checked> <span data-i18n="quakeL">Terremoti (24 h)</span></label>
+          <label class="chk"><input type="checkbox" id="optDxped" checked> <span data-i18n="dxpedL">DXpedition</span></label>
+          <label class="chk"><input type="checkbox" id="optBeacons" checked> <span data-i18n="ncdxfL">Beacon NCDXF</span></label>
+          <label class="chk"><input type="checkbox" id="optCq"> <span data-i18n="cqz">Zone CQ</span></label>
+          <label class="chk"><input type="checkbox" id="optItu"> <span data-i18n="ituz">Zone ITU</span></label>
+        </div></details>
+      <button class="mtb" id="btnReset" type="button" title="Vista iniziale" data-i18n-title="reset">⌂</button>
+      <button class="mtb" id="btnWide" type="button" title="Allarga la mappa" data-i18n-title="wide">⤢</button>
+      <button class="mtb" id="btnFull" type="button" title="Schermo intero" data-i18n-title="full">⛶</button>
+      <span class="live"><i></i><span id="liveCount">0</span> <span data-i18n="spotsMin">spot/min</span></span>
+    </div>
+    <div class="mapwrap"><canvas id="mapgl" aria-hidden="true"></canvas><canvas id="map" aria-label="Mappa mondiale degli spot"></canvas>
+      <div class="zoomhud" id="zoomhud" hidden></div>
+      <aside class="maplegend" id="legend" aria-label="Legenda"></aside>
+      <small class="attrib">Luci notturne: NASA Earth Observatory / Black Marble · Mappa: Natural Earth · Aurora: NOAA SWPC · Zone CQ/ITU: HB9HIL (MIT) · Beacon: NCDXF/IARU · mappa di DecoClock<span id="tileAttrib" hidden> · Immagini: NASA GIBS Blue Marble · Sentinel-2 cloudless © EOX IT Services GmbH (Copernicus Sentinel data 2016, CC BY 4.0)</span></small></div>
+    <div class="tip" id="tip" hidden></div>
+    <div class="bandbar" id="bandbar" role="group" aria-label="Bande"></div>
+  </section>
+
+  <aside class="card feedcard">
+    <div class="feed-head">
+      <div class="chips" id="modeChips" role="group" aria-label="Modo">
+        <button data-m="ALL" class="on">Tutti</button><button data-m="CW">CW</button><button data-m="PHONE">SSB</button><button data-m="DIGI">DIGI</button>
+      </div>
+      <div class="chips" id="digChips" role="group" aria-label="Modi digitali" hidden></div>
+      <div class="chips" id="orderChips" role="group" aria-label="Ordine"><button data-o="time" class="on" data-i18n="ordTime">Recenti</button><button data-o="dist" data-i18n="ordDist">Più lontani</button></div>
+      <div class="chips" id="contChips" role="group" aria-label="Continente"></div>
+      <label class="chk"><input type="checkbox" id="optWatchOnly"> <span data-i18n="watchOnly">Solo watchlist</span></label>
+      <label class="chk"><input type="checkbox" id="optNeedOnly"> <span data-i18n="needOnly">Solo nuovi per me</span></label>
+    </div>
+    <ol class="feed" id="feed" aria-live="polite"></ol>
+    <div class="feed-foot"><span id="status">…</span><span><a href="/classic">Classic</a> · <a id="telnetLink" href="telnet://iq8do.aricaserta.it:7300">telnet :7300</a></span></div>
+  </aside>
+
+  <section class="card statscard">
+    <h3 id="visT">Visitatori online</h3>
+    <div id="visitors" class="visitors"></div>
+    <h3 data-i18n="myDx">Il mio DXCC</h3>
+    <div id="mydx" class="mydx"></div>
+    <h3 data-i18n="heardT">Dove mi sentono · 30 min</h3>
+    <div id="heard" class="heard"></div>
+    <h3 data-i18n="satT">Satelliti sopra Caserta · prossimi passaggi</h3>
+    <div id="sats" class="sats"></div>
+    <h3 data-i18n="trendT">DX in aumento · pile-up che si formano</h3>
+    <div id="trend" class="trend"></div>
+    <h3 data-i18n="moonT">Luna · EME</h3>
+    <div id="moon" class="moon"></div>
+    <h3 data-i18n="ctT">Contest · in corso e prossimi 7 giorni</h3>
+    <div id="contests" class="contests"></div>
+    <h3 data-i18n="quakeT">Terremoti · ultime 24 ore</h3>
+    <div id="quakes" class="quakes"></div>
+    <h3 id="hfT">Propagazione HF per banda</h3>
+    <div id="hf" class="hfbox"></div>
+    <h3 data-i18n="propT">Propagazione verso Caserta · 30 min</h3>
+    <div id="prop" class="prop"></div>
+    <h3 data-i18n="greyT">Greyline verso i DX cercati</h3>
+    <div id="grey" class="grey"></div>
+    <h3 data-i18n="activity">Attività per banda · 30 min</h3>
+    <div id="bars" class="bars"></div>
+    <h3 data-i18n="topDx">DX più spottati</h3>
+    <ol id="topdx" class="topdx"></ol>
+    <h3 data-i18n="ncdxf">Beacon NCDXF · in onda ora</h3>
+    <div id="beacons" class="beacons"></div>
+    <h3 data-i18n="rate">Spot al minuto</h3>
+    <canvas id="spark" height="70"></canvas>
+    <h3 data-i18n="heat">Ora × banda (storico)</h3>
+    <canvas id="heat" height="150"></canvas>
+  </section>
+</main>
+<footer class="sitefoot"><span data-i18n="credits">Design, progettazione e realizzazione</span> <b>IU8LMC Martino Merola</b> <i>·</i> 2027 <i>·</i> <a href="https://www.aricaserta.it/" target="_blank" rel="noopener">A.R.I. Caserta</a> <i>·</i> Deco WebDX Cluster</footer>
+
+<div id="ana" class="anapage" hidden role="dialog" aria-modal="true" aria-label="Analisi"></div>
+<div id="act" class="anapage" hidden role="dialog" aria-modal="true" aria-label="Activation"></div>
+
+<footer class="ticker" id="ticker" aria-label="DXpedition annunciate (NG3K ADXO)"></footer>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="map" class="on">🌍 <span data-i18n="tabMap">Mappa</span></button>
+  <button data-tab="feed">📡 <span data-i18n="tabSpots">Spot</span></button>
+  <button data-tab="stats">📊 <span data-i18n="tabStats">Statistiche</span></button>
+  <button data-tab="ana">📈 <span id="tabAnaTxt">Analisi</span></button>
+  <button data-tab="act">🏝 <span id="tabActTxt">9T0MD</span></button>
+</nav>
+
+<div class="toasts" id="toasts" aria-live="assertive"></div>
+
+<dialog id="dlgAccount">
+  <h2 id="accTitle">Area personale OM</h2>
+  <div id="accBody"></div>
+  <menu><button type="button" id="accClose">Chiudi</button></menu>
+</dialog>
+
+<dialog id="dlgTools" class="toolsdlg">
+  <div class="toolshead"><h2 id="toolsTitle">Strumenti radio</h2><button type="button" id="toolsClose">Chiudi</button></div>
+  <div class="toolstabs" id="toolsTabs"></div>
+  <div class="toolsbody" id="toolsBody"></div>
+</dialog>
+
+<dialog id="dlgSpot">
+  <form method="dialog">
+    <div id="spotInfo"></div>
+    <menu><button value="close" data-i18n="close">Chiudi</button></menu>
+  </form>
+</dialog>
+
+<dialog id="dlgAlerts">
+  <form method="dialog">
+    <h2 data-i18n="alerts">Avvisi DX</h2>
+    <p class="hint" data-i18n="alertsHint">Ricevi un avviso (suono + notifica) quando viene spottato uno di questi nominativi o prefissi. Usa * come jolly: 3Y0*, VP8*, K1N…</p>
+    <textarea id="watchText" rows="4" spellcheck="false" placeholder="3Y0J, VP8*, T31EU"></textarea>
+    <fieldset id="pushBox"><legend data-i18n="pushT">Notifiche push (anche ad app chiusa)</legend>
+      <p class="hint" id="pushHint"></p>
+      <button type="button" id="btnPush" class="ghost"></button>
+      <div id="pushOpts">
+        <label class="chk"><input type="checkbox" value="mine" checked> <span data-i18n="pushMine">Quando il mio nominativo viene spottato</span></label>
+        <label class="chk"><input type="checkbox" value="watch" checked> <span data-i18n="pushWatch">Quando spottano un nominativo della watchlist</span></label>
+        <label class="chk"><input type="checkbox" value="space" checked> <span data-i18n="pushSpace">Brillamenti solari e tempeste geomagnetiche</span></label>
+      </div></fieldset>
+    <label class="chk"><input type="checkbox" id="optOpen" checked> <span data-i18n="openAl">Avvisa quando una banda si apre verso una regione</span></label>
+    <label class="chk"><input type="checkbox" id="optSound" checked> <span data-i18n="sound">Suono</span></label>
+    <label class="chk"><input type="checkbox" id="optNotify"> <span data-i18n="notify">Notifiche del browser</span></label>
+    <fieldset id="needAlerts"><legend data-i18n="needAlertsT">Avvisa quando mi manca…</legend>
+      <label class="chk"><input type="checkbox" value="dxcc"> <span data-i18n="need_dxcc">NUOVO DXCC</span></label>
+      <label class="chk"><input type="checkbox" value="band"> <span data-i18n="need_band">NUOVA BANDA</span></label>
+      <label class="chk"><input type="checkbox" value="slot"> <span data-i18n="need_slot">NUOVO SLOT</span></label>
+      <label class="chk"><input type="checkbox" value="zone"> <span data-i18n="need_zone">NUOVA ZONA CQ</span></label>
+      <label class="chk"><input type="checkbox" value="zband"> <span data-i18n="need_zband">ZONA NUOVA IN BANDA</span></label>
+      <label class="chk"><input type="checkbox" value="grid"> <span data-i18n="need_grid">NUOVO QUADRANTE</span></label></fieldset>
+    <menu><button value="cancel" data-i18n="cancel">Annulla</button><button value="ok" class="primary" id="saveAlerts" data-i18n="save">Salva</button></menu>
+  </form>
+</dialog>
+
+<dialog id="dlgSettings">
+  <form method="dialog">
+    <h2 data-i18n="settings">Impostazioni</h2>
+    <label class="field"><span data-i18n="myCall">Il mio nominativo</span><input id="myCall" autocomplete="off" spellcheck="false" placeholder="IU8LMC"></label>
+    <div class="field"><span data-i18n="myLog">Il mio log (ADIF)</span>
+      <input type="file" id="logFile" accept=".adi,.adif,.txt">
+      <p class="hint" id="logInfo"></p>
+      <button type="button" id="logClear" hidden data-i18n="logClear">Rimuovi il log</button>
+      <p class="hint" data-i18n="logPrivacy">Il file viene letto solo nel tuo browser e resta sul tuo dispositivo: non viene inviato a nessun server.</p></div>
+    <label class="chk"><input type="checkbox" id="optAwake"> <span data-i18n="awake">Tieni lo schermo acceso</span></label>
+    <label class="chk"><input type="checkbox" id="optHaptic" checked> <span data-i18n="haptic">Vibrazione sugli avvisi</span></label>
+    <label class="field"><span data-i18n="confModeT">Conta come già fatti</span>
+      <select id="confMode"><option value="w">Tutti i QSO (lavorati)</option><option value="c">Solo i confermati (LoTW/eQSL/QSL)</option></select></label>
+    <label class="field"><span data-i18n="callbookT">Cliccando un nominativo apri</span>
+      <select id="callbook"><option value="qrz">QRZ.com</option><option value="hamqth">HamQTH.com</option></select></label>
+    <label class="field"><span data-i18n="lang">Lingua</span>
+      <select id="lang"><option value="it">Italiano</option><option value="en">English</option></select></label>
+    <label class="field"><span data-i18n="refresh">Aggiornamento</span>
+      <select id="poll"><option value="5">5 s</option><option value="10" selected>10 s</option><option value="20">20 s</option></select></label>
+    <button type="button" class="ghost" id="btnInstall2" data-i18n="installApp">Installa APP</button>
+    <menu><button value="cancel" data-i18n="cancel">Annulla</button><button value="ok" class="primary" id="saveSettings" data-i18n="save">Salva</button></menu>
+  </form>
+</dialog>
+
+<script src="app.js" defer></script>
+</body>
+</html>
