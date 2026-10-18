@@ -304,12 +304,21 @@ export function initActivation({ $, $$, esc, getLang: _appLang, store, deps = {}
     $('#actTitle').textContent = `🏝 ${tr('title')} ${CALL}`;
   }
   const BAR = { it: `Scopri lo special cluster di ${CALL}: statistiche, spot in entrata e in uscita, collegamenti per banda e rapporti PSK Reporter in tempo reale. Clicca qui`, en: `Discover the ${CALL} special cluster: statistics, incoming and outgoing spots, activity per band and live PSK Reporter reports. Click here` };
-  function applyBar() {
-    const tk = $('#actBarTrack'); if (!tk) return;
-    const m = `<span>🏝 ${esc(BAR[getLang()] || BAR.it)} ▸</span>`;
-    tk.innerHTML = m + m;
-  }
-  function applyStatic() { applyBar(); const tb = $('#tabActTxt'); if (tb) tb.textContent = CALL; const bt = $('#btnAct'); if (bt) bt.title = `${tr('title')} ${CALL}`; }
+  let newsItems = [], newsTimer = 0;
+// Notizie speciali dal servizio del portale (/hh-api/news): compaiono prima del testo fisso
+async function loadNews() {
+  try {
+    const r = await fetch('/hh-api/news', { cache: 'no-store' });
+    if (r.ok) { newsItems = await r.json(); applyBar(); }
+  } catch { /* resta l'ultimo elenco letto */ }
+}
+function applyBar() {
+  const tk = $('#actBarTrack'); if (!tk) return;
+  const news = newsItems.map((x) => `<span>📢 ${esc(x.text)} ▸</span>`).join('');
+  const m = `<span>🏝 ${esc(BAR[getLang()] || BAR.it)} ▸</span>`;
+  tk.innerHTML = news + m + news + m;
+}
+  function applyStatic() { if (!newsTimer) { newsTimer = 1; loadNews(); setInterval(loadNews, 120e3); } applyBar(); const tb = $('#tabActTxt'); if (tb) tb.textContent = CALL; const bt = $('#btnAct'); if (bt) bt.title = `${tr('title')} ${CALL}`; }
 
   function open() {
     openFlag = true; document.body.classList.add('ana-open'); root.hidden = false; shell(); load(); root.scrollTop = 0;

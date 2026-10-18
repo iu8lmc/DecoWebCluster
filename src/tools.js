@@ -6,7 +6,7 @@ import { bandOf, prefixToIso } from './radio.js';
 const HOME = [14.33, 41.07];
 const L = {
   it: {
-    title: 'Strumenti radio', close: 'Chiudi', tLoc: 'Locator', tDx: 'DX e sole', tConv: 'Convertitori', tAnt: 'Antenne', tRef: 'Riferimenti', tCon: 'Console',
+    title: 'Strumenti radio', close: 'Chiudi', tLoc: 'Locator', tDx: 'DX e sole', tConv: 'Convertitori', tAnt: 'Antenne', tRef: 'Riferimenti', tCon: 'Console', tNot: 'Notizie',
     from: 'Da (locator o lat,lon)', to: 'A (locator o lat,lon)', homeHint: 'Vuoto = Caserta (JN71)', calc: 'Calcola', bad: 'Non riconosco questo valore.',
     loc6: 'Locator', coords: 'Coordinate', sp: 'Percorso corto', lp: 'Percorso lungo', dist: 'Distanza', az: 'Azimut', cqz: 'Zona CQ', ituz: 'Zona ITU',
     call: 'Nominativo o prefisso', entity: 'Entità', cont: 'Continente', solar: 'Ora solare locale', rise: 'Alba', set: 'Tramonto', sunalt: 'Altezza del Sole', grey: 'Greyline adesso', yes: 'sì', no: 'no',
@@ -18,7 +18,7 @@ const L = {
     cRun: 'Esegui', cPh: 'sh/dx 20, sh/wwv, sh/sun JA, sh/muf 7', cErr: 'Comando non riuscito.', cBadCmd: 'Comando non consentito.', cWait: 'Attendi…', cMany: 'Troppi comandi: riprova tra poco.',
   },
   en: {
-    title: 'Radio tools', close: 'Close', tLoc: 'Locator', tDx: 'DX & sun', tConv: 'Converters', tAnt: 'Antennas', tRef: 'Reference', tCon: 'Console',
+    title: 'Radio tools', close: 'Close', tLoc: 'Locator', tDx: 'DX & sun', tConv: 'Converters', tAnt: 'Antennas', tRef: 'Reference', tCon: 'Console', tNot: 'News',
     from: 'From (locator or lat,lon)', to: 'To (locator or lat,lon)', homeHint: 'Empty = Caserta (JN71)', calc: 'Calculate', bad: 'I do not recognise this value.',
     loc6: 'Locator', coords: 'Coordinates', sp: 'Short path', lp: 'Long path', dist: 'Distance', az: 'Bearing', cqz: 'CQ zone', ituz: 'ITU zone',
     call: 'Callsign or prefix', entity: 'Entity', cont: 'Continent', solar: 'Local solar time', rise: 'Sunrise', set: 'Sunset', sunalt: 'Sun elevation', grey: 'Greyline now', yes: 'yes', no: 'no',
@@ -71,7 +71,7 @@ export function initTools({ $, $$, esc, getLang, getAcct }) {
   const dlg = $('#dlgTools'); if (!dlg) return;
   const API = window.CLUSTER_API ?? '/';
   const tr = (k) => (L[getLang()] || L.it)[k] ?? L.it[k] ?? k;
-  const TABS = ['Loc', 'Dx', 'Conv', 'Ant', 'Ref', 'Con'];
+  const TABS = ['Loc', 'Dx', 'Conv', 'Ant', 'Ref', 'Con', 'Not'];
   let tab = 'Loc';
   const f1 = (n, d = 1) => Number(n).toLocaleString(getLang() === 'en' ? 'en-GB' : 'it-IT', { maximumFractionDigits: d });
   const hhmm = (ms, tz = 'UTC') => new Date(ms).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', timeZone: tz });
@@ -171,18 +171,57 @@ export function initTools({ $, $$, esc, getLang, getAcct }) {
     btn.disabled = false;
   }
 
-  const VIEWS = { Loc: viewLoc, Dx: viewDx, Conv: viewConv, Ant: viewAnt, Ref: viewRef, Con: viewCon };
+  /* ---- Notizie speciali (barra special cluster) ---- */
+  const NW = () => (getLang() === 'en'
+    ? { h: 'Shown in the special cluster bar. Only the administrator can add or remove them.', key: 'Admin key', login: 'Unlock', logout: 'Lock', ph: 'Text (max 280 characters)', pub: 'Publish', del: 'Delete', none: 'No news yet', bad: 'Key not valid', err: 'Connection error', done: 'Done' }
+    : { h: 'Mostrate nella barra special cluster. Solo l\'amministratore può aggiungerle o toglierle.', key: 'Chiave amministratore', login: 'Sblocca', logout: 'Blocca', ph: 'Testo (max 280 caratteri)', pub: 'Pubblica', del: 'Elimina', none: 'Nessuna notizia', bad: 'Chiave non valida', err: 'Errore di connessione', done: 'Fatto' });
+  const NEWS_API = '/hh-api/news';
+  const nKey = () => { try { return sessionStorage.getItem('hh-news-key') || ''; } catch { return ''; } };
+  function viewNot() {
+    const n = NW(), unlocked = !!nKey();
+    return `<p class="hint">${n.h}</p>
+      <div class="trow">${unlocked
+        ? `<button type="button" class="tbtn" data-t="nLock">${n.logout}</button>`
+        : `<input id="nKey" type="password" autocomplete="off" placeholder="${n.key}" style="flex:1"><button type="button" class="tbtn" data-t="nLogin">${n.login}</button>`}</div>
+      ${unlocked ? `<div class="trow"><textarea id="nTxt" maxlength="280" rows="2" placeholder="${n.ph}" style="flex:1"></textarea><button type="button" class="tbtn" data-t="nPub">${n.pub}</button></div>` : ''}
+      <div id="nMsg" class="hint" role="status"></div>
+      <div id="nLst"><p class="hint">…</p></div>`;
+  }
+  async function newsLoad() {
+    const n = NW(), box = $('#nLst'); if (!box) return;
+    try {
+      const r = await fetch(NEWS_API, { cache: 'no-store' });
+      const list = await r.json(), unlocked = !!nKey();
+      box.innerHTML = list.length
+        ? list.map((x) => `<div class="trow nitem"><span style="flex:1">${esc(x.text)}</span>${unlocked ? `<button type="button" class="tbtn" data-t="nDel" data-id="${esc(x.id)}">${n.del}</button>` : ''}</div>`).join('')
+        : `<p class="hint">${n.none}</p>`;
+    } catch { box.innerHTML = `<p class="hint">${n.err}</p>`; }
+  }
+  async function newsAction(method, path, body) {
+    const n = NW(), msg = $('#nMsg'), say = (s) => { if (msg) msg.textContent = s; };
+    try {
+      const r = await fetch(NEWS_API + path, { method, headers: { 'X-Admin-Key': nKey(), 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+      if (r.status === 401) { try { sessionStorage.removeItem('hh-news-key'); } catch { /* */ } say(n.bad); render(); return false; }
+      if (!r.ok) { const j = await r.json().catch(() => ({})); say(j.error || n.err); return false; }
+      say(n.done); return true;
+    } catch { say(n.err); return false; }
+  }
+  const VIEWS = { Loc: viewLoc, Dx: viewDx, Conv: viewConv, Ant: viewAnt, Ref: viewRef, Con: viewCon, Not: viewNot };
   function render() {
     $('#toolsTitle').textContent = '🧰 ' + tr('title');
     $('#toolsClose').textContent = tr('close');
     $('#toolsTabs').innerHTML = TABS.map((k) => `<button type="button" data-tab="${k}" class="${k === tab ? 'on' : ''}">${tr('t' + k)}</button>`).join('');
     $('#toolsBody').innerHTML = VIEWS[tab]();
-    if (tab === 'Conv') updConv(); if (tab === 'Ant') updAnt();
+    if (tab === 'Conv') updConv(); if (tab === 'Ant') updAnt(); if (tab === 'Not') newsLoad();
   }
   $('#toolsTabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) { tab = b.dataset.tab; render(); } });
   $('#toolsBody').addEventListener('click', (e) => {
     const b = e.target.closest('[data-t]'); if (!b) return;
     if (b.dataset.t === 'loc') doLoc(); else if (b.dataset.t === 'dx') doDx(); else if (b.dataset.t === 'run') runCmd(); else if (b.dataset.t === 'login') { dlg.close(); $('#btnAccount').click(); }
+    else if (b.dataset.t === 'nLogin') { const v = $('#nKey')?.value.trim(); if (v) { try { sessionStorage.setItem('hh-news-key', v); } catch { /* */ } render(); } }
+    else if (b.dataset.t === 'nLock') { try { sessionStorage.removeItem('hh-news-key'); } catch { /* */ } render(); }
+    else if (b.dataset.t === 'nPub') { const v = $('#nTxt')?.value.trim(); if (v) newsAction('POST', '', { text: v }).then((ok) => { if (ok) { $('#nTxt').value = ''; newsLoad(); } }); }
+    else if (b.dataset.t === 'nDel') newsAction('DELETE', '/' + encodeURIComponent(b.dataset.id)).then((ok) => { if (ok) newsLoad(); });
   });
   $('#toolsBody').addEventListener('input', () => { if (tab === 'Conv') updConv(); else if (tab === 'Ant') updAnt(); });
   $('#toolsBody').addEventListener('keydown', (e) => {
