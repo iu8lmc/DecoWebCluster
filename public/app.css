@@ -26,6 +26,10 @@ a{color:var(--acc)}
 :root[data-theme=light] .top{background:rgba(245,248,254,.82)}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--tx)}
 .brand img{border-radius:50%;box-shadow:0 0 0 2px var(--acc2),0 0 18px rgba(245,185,66,.35)}
+.brand img.brand-logo{height:40px;width:auto;border-radius:0;box-shadow:none}
+.brand-logo-light{display:none}
+:root[data-theme=light] .brand-logo-dark{display:none}
+:root[data-theme=light] .brand-logo-light{display:block}
 .brand-t{display:flex;flex-direction:column;line-height:1.1}
 .brand-t b{font-size:20px;letter-spacing:.06em}
 .brand-t small{color:var(--mut);font-size:11px}
