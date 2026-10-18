@@ -77,7 +77,7 @@ export function initTicker({ getLang, getConfirmedOnly, t, callUrl, source = SOU
     const list = items();
     const xs = extra();
     if (!list.length && !xs.length) {
-      box.innerHTML = `<span class="tk-label">ADXO</span><span class="tk-empty">${data ? t('tkNone') : t('tkLoading')}</span>`;
+      box.innerHTML = `<span class="tk-label">DXN</span><span class="tk-empty">${data ? t('tkNone') : t('tkLoading')}</span>`;
       lastKey = '';
       return;
     }
@@ -86,7 +86,7 @@ export function initTicker({ getLang, getConfirmedOnly, t, callUrl, source = SOU
     const key = body + getLang();
     if (key === lastKey) return; // niente da cambiare: l'animazione non riparte
     lastKey = key;
-    box.innerHTML = `<span class="tk-label" title="${esc(data ? data.updated : '')}">📡 ADXO</span>
+    box.innerHTML = `<span class="tk-label" title="${esc(data ? data.updated : '')}">📡 DXN</span>
       <div class="tk-track"><div class="tk-move"><div class="tk-group">${body}</div><div class="tk-group" aria-hidden="true">${body}</div></div></div>
       <button class="tk-pause" type="button" aria-label="${t('tkPause')}" title="${t('tkPause')}">${paused ? '▶' : '⏸'}</button>`;
     const move = box.querySelector('.tk-move'), w = box.querySelector('.tk-group').scrollWidth;
